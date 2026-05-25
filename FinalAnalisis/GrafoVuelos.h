@@ -6,7 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <unordered_map>
-#include <limits> // Asegura el soporte para valores infinitos
+#include <limits> 
 #include "Aeropuerto.h"
 
 using namespace std;
@@ -15,6 +15,10 @@ class GrafoVuelos {
 private:
     vector<Aeropuerto> aeropuertos;
     unordered_map<int, int> idRealAIndiceInterno;
+
+    // --- NUEVAS ESTRUCTURAS DE CONTROL PARA RETOS 1 Y 4 ---
+    vector<string> paisesNodos;             // Guarda el país de cada aeropuerto indexado internamente
+    unordered_map<string, int> iataAIndice; // Mapea el código de 3 letras IATA al índice interno
 
     double calcularDistanciaGeo(double lat1, double lon1, double lat2, double lon2) const {
         const double R = 6371.0;
@@ -79,10 +83,18 @@ public:
             }
 
             string nombre = columnas[1];
+            string pais = columnas[3]; // Índice 3: País de origen
+            string iata = columnas[4]; // Índice 4: Código IATA de 3 letras
 
             int indiceInterno = aeropuertos.size();
             aeropuertos.push_back(Aeropuerto(idReal, nombre, latitud, longitud));
             idRealAIndiceInterno[idReal] = indiceInterno;
+
+            // --- ALMACENAMIENTO DE NUEVOS ATRIBUTOS ---
+            paisesNodos.push_back(pais);
+            if (iata != "\\N" && !iata.empty()) {
+                iataAIndice[iata] = indiceInterno;
+            }
         }
         archivo.close();
         return true;
@@ -159,7 +171,6 @@ public:
 
     size_t getCantidadNodos() const { return aeropuertos.size(); }
 
-    // GETTERS FUNDAMENTALES PARA DIJKSTRA
     const vector<Aeropuerto>& getAeropuertos() const { return aeropuertos; }
 
     string getNombreAeropuerto(int indiceInterno) const {
@@ -167,5 +178,30 @@ public:
             return aeropuertos[indiceInterno].getNombre();
         }
         return "Desconocido";
+    }
+
+    // --- NUEVOS MÉTODOS PÚBLICOS DE ACCESO ---
+
+    // Retorna el índice interno a partir del código IATA (Reto 1)
+    int obtenerIndicePorIATA(const string& iata) const {
+        if (iataAIndice.count(iata)) return iataAIndice.at(iata);
+        return -1;
+    }
+
+    // Retorna el país asignado al nodo interno (Reto 4)
+    string getPais(int indiceInterno) const {
+        if (indiceInterno >= 0 && indiceInterno < (int)paisesNodos.size()) {
+            return paisesNodos[indiceInterno];
+        }
+        return "Desconocido";
+    }
+
+    // Determina si un país pertenece a Sudamérica para el filtrado del MST (Reto 4)
+    bool esSudamerica(const string& pais) const {
+        return (pais == "Argentina" || pais == "Bolivia" || pais == "Brazil" ||
+            pais == "Chile" || pais == "Colombia" || pais == "Ecuador" ||
+            pais == "Guyana" || pais == "Paraguay" || pais == "Peru" ||
+            pais == "Suriname" || pais == "Uruguay" || pais == "Venezuela" ||
+            pais == "French Guiana" || pais == "Falkland Islands");
     }
 };

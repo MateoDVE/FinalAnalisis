@@ -5,76 +5,85 @@
 
 using namespace std;
 
-// Estructura Union-Find (Conjuntos Disjuntos) para evitar ciclos en O(1) amortizado
+// Estructura auxiliar para manejar los conjuntos (Union-Find)
 class UnionFind {
 private:
     vector<int> padre;
-    vector<int> rango;
+    vector<int> rango; // O "cont" como lo menciona tu teoría, para balancear el árbol
 
 public:
     UnionFind(int n) {
         padre.resize(n);
         rango.resize(n, 0);
-        // Al inicio, cada aeropuerto es su propio padre (están aislados)
-        for (int i = 0; i < n; i++) {
+        // Inicializar: cada nodo es padre de sí mismo (grupos individuales)
+        for (int i = 0; i < n; ++i) {
             padre[i] = i;
         }
     }
 
-    // Encuentra la raíz del conjunto con "compresión de caminos" para máxima velocidad
+    // Encuentra la raíz del grupo al que pertenece el nodo 'i'
     int buscar(int i) {
-        if (padre[i] == i) return i;
+        if (padre[i] == i) {
+            return i;
+        }
+        // Compresión de caminos: hacemos que el nodo apunte directamente a la raíz
         return padre[i] = buscar(padre[i]);
     }
 
-    // Une dos conjuntos basándose en su rango (profundidad)
-    bool unir(int i, int j) {
+    // Une los grupos de los nodos 'i' y 'j'
+    void unir(int i, int j) {
         int raizI = buscar(i);
         int raizJ = buscar(j);
 
-        // Si tienen la misma raíz, formarían un ciclo. No los unimos.
-        if (raizI == raizJ) return false;
-
-        // Unimos el árbol más pequeño debajo del más grande
-        if (rango[raizI] < rango[raizJ]) {
-            padre[raizI] = raizJ;
+        if (raizI != raizJ) {
+            // Unir el árbol más pequeño debajo del más grande (Unión por rango/tamaño)
+            if (rango[raizI] < rango[raizJ]) {
+                padre[raizI] = raizJ;
+            }
+            else if (rango[raizI] > rango[raizJ]) {
+                padre[raizJ] = raizI;
+            }
+            else {
+                padre[raizJ] = raizI;
+                rango[raizI]++; // Si son iguales, elegimos uno y le subimos el rango
+            }
         }
-        else if (rango[raizI] > rango[raizJ]) {
-            padre[raizJ] = raizI;
-        }
-        else {
-            padre[raizJ] = raizI;
-            rango[raizI]++;
-        }
-        return true;
     }
 };
 
 class Kruskal {
 public:
-    // Función principal para obtener el MST
-    // Retorna las aristas que forman la red óptima y calcula el costo total por referencia
+    // Retorna la lista de aristas que conforman el MST y guarda el costo en costoTotalKm
     static vector<GrafoVuelos::AristaPonderada> encontrarMST(
-        vector<GrafoVuelos::AristaPonderada>& aristas, int numNodos, double& costoTotalKm) {
-
+        vector<GrafoVuelos::AristaPonderada>& aristas,
+        int totalNodos,
+        double& costoTotalKm)
+    {
         vector<GrafoVuelos::AristaPonderada> mst;
         costoTotalKm = 0.0;
 
-        // 1. Ordenar todas las aristas de menor a mayor distancia usando una función lambda
+        // 1. Ordenar TODAS las aristas de menor a mayor peso (distancia)
         sort(aristas.begin(), aristas.end(),
             [](const GrafoVuelos::AristaPonderada& a, const GrafoVuelos::AristaPonderada& b) {
                 return a.peso < b.peso;
             });
 
-        // 2. Inicializar la estructura para detectar ciclos
-        UnionFind uf(numNodos);
+        // 2. Inicializar Union Find -> cada nodo en su propio grupo
+        UnionFind uf(totalNodos);
 
-        // 3. Procesar las aristas
+        // 3. Para cada arista (origen, destino, peso) en orden ascendente
         for (const auto& arista : aristas) {
-            // Si unir el origen y destino NO forma un ciclo...
-            if (uf.unir(arista.origen, arista.destino)) {
-                mst.push_back(arista); // ...agregamos la ruta a nuestra red base
+            int origen = arista.origen;
+            int destino = arista.destino;
+
+            // Si find(origen) != find(destino) -> están en diferentes grupos
+            if (uf.buscar(origen) != uf.buscar(destino)) {
+                // No hay ciclo, la agregamos a nuestra Red Mínima
+                mst.push_back(arista);
                 costoTotalKm += arista.peso;
+
+                // Unimos los grupos
+                uf.unir(origen, destino);
             }
         }
 

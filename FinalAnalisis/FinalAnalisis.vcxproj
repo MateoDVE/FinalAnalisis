@@ -128,6 +128,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Aeropuerto.cpp" />
+    <ClCompile Include="Bfs.cpp" />
     <ClCompile Include="Dijkstra.cpp" />
     <ClCompile Include="FinalAnalisis.cpp" />
     <ClCompile Include="GrafoVuelos.cpp" />
@@ -137,6 +138,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Aeropuerto.h" />
+    <ClInclude Include="Bfs.h" />
     <ClInclude Include="Dijkstra.h" />
     <ClInclude Include="GrafoVuelos.h" />
     <ClInclude Include="Kruskal.h" />
