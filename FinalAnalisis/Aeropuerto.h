@@ -14,15 +14,15 @@ private:
     vector<Ruta> rutasSalida;
 
 public:
-    Aeropuerto(int id, const string& nom, double lat, double lon)
+    Aeropuerto(int id, string nom, double lat, double lon)
         : idReal(id), nombre(nom), latitud(lat), longitud(lon) {
     }
 
-    int getIdReal() const { return idReal; }
-    string getNombre() const { return nombre; }
-    double getLatitud() const { return latitud; }
-    double getLongitud() const { return longitud; }
-    const vector<Ruta>& getRutasSalida() const { return rutasSalida; }
+    int getIdReal() { return idReal; }
+    string getNombre() { return nombre; }
+    double getLatitud() { return latitud; }
+    double getLongitud() { return longitud; }
+    vector<Ruta>& getRutasSalida() { return rutasSalida; }
 
     void agregarRuta(int idDestino, double distanciaKm) {
         rutasSalida.push_back(Ruta(idDestino, distanciaKm));

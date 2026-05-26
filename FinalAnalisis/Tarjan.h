@@ -7,7 +7,7 @@ using namespace std;
 
 class Tarjan {
 private:
-    void dfs(int nodoActual, const vector<vector<int>>& g, vector<int>& ids,
+    void dfs(int nodoActual, vector<vector<int>>& g, vector<int>& ids,
         vector<int>& low, vector<bool>& enPila, stack<int>& pila,
         int& id, int& contSCC, vector<int>& vecSCC) {
 
@@ -42,7 +42,7 @@ private:
     }
 
 public:
-    vector<int> encontrarSCC(const vector<vector<int>>& g) {
+    vector<int> encontrarSCC(vector<vector<int>>& g) {
         int n = g.size();
         vector<int> ids(n, -1);
         vector<int> low(n, 0);

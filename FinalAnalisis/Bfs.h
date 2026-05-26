@@ -7,10 +7,10 @@ using namespace std;
 
 class BFS {
 public:
-    int contarAlcanzables(const GrafoVuelos& grafo, int origenIdx, int maxEscalas) {
+    int contarAlcanzables(GrafoVuelos& grafo, int origenIdx, int maxEscalas) {
         int maxAristas = maxEscalas + 1;
         int n = grafo.getCantidadNodos();
-        const auto& aeropuertos = grafo.getAeropuertos();
+        vector<Aeropuerto>& aeropuertos = grafo.getAeropuertos();
 
         vector<int> distancias(n, -1);
         queue<int> cola;
@@ -26,9 +26,9 @@ public:
 
             if (distancias[u] >= maxAristas) continue;
 
-            for (const auto& ruta : aeropuertos[u].getRutasSalida()) {
+            for (Ruta& ruta : aeropuertos[u].getRutasSalida()) {
                 int v = ruta.getIdDestino();
-                if (distancias[v] == -1) { // Si no ha sido visitado
+                if (distancias[v] == -1) {
                     distancias[v] = distancias[u] + 1;
                     cola.push(v);
                     aeropuertosAlcanzados++;

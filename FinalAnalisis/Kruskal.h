@@ -56,13 +56,13 @@ public:
         costoTotalKm = 0.0;
 
         sort(aristas.begin(), aristas.end(),
-            [](const GrafoVuelos::AristaPonderada& a, const GrafoVuelos::AristaPonderada& b) {
+            [](GrafoVuelos::AristaPonderada& a, GrafoVuelos::AristaPonderada& b) {
                 return a.peso < b.peso;
             });
 
         UnionFind uf(totalNodos);
 
-        for (const auto& arista : aristas) {
+        for (GrafoVuelos::AristaPonderada& arista : aristas) {
             int origen = arista.origen;
             int destino = arista.destino;
 

@@ -9,6 +9,6 @@ private:
 public:
     Ruta(int destino, double distancia) : idDestino(destino), distanciaKm(distancia) {}
 
-    int getIdDestino() const { return idDestino; }
-    double getDistanciaKm() const { return distanciaKm; }
+    int getIdDestino() { return idDestino; }
+    double getDistanciaKm() { return distanciaKm; }
 };

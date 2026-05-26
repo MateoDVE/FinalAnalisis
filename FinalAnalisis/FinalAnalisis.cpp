@@ -3,10 +3,10 @@
 #include <vector>
 #include <string>
 #include "GrafoVuelos.h"
-#include "BFS.h"      // Para el Reto 1
-#include "Tarjan.h"   // Para el Reto 2
-#include "Dijkstra.h" // Para el Reto 3
-#include "Kruskal.h"  // Para el Reto 4
+#include "BFS.h"
+#include "Tarjan.h"
+#include "Dijkstra.h"
+#include "Kruskal.h"
 
 using namespace std;
 
@@ -20,10 +20,7 @@ int main() {
 
     int totalNodos = miGrafo.getCantidadNodos();
     cout << "Total de nodos activos en la infraestructura: " << totalNodos << endl;
-
-    // ==========================================
-    // --- Reto 1 (Alcance - BFS) ---
-    // ==========================================
+    //Reto 1
     cout << "\n--- Reto 1: Alcance Personalizado (Max 3 escalas) ---\n";
     string iataBuscado;
     cout << "Ingrese el codigo IATA del aeropuerto origen (ej. VVI, JFK, MAD): ";
@@ -31,7 +28,6 @@ int main() {
 
     int origenIdx = miGrafo.obtenerIndicePorIATA(iataBuscado);
     if (origenIdx != -1) {
-        // maxEscalas = 3
         BFS bfs;
         int alcanzables = bfs.contarAlcanzables(miGrafo, origenIdx, 3);
         cout << ">> Desde " << miGrafo.getNombreAeropuerto(origenIdx)
@@ -42,9 +38,7 @@ int main() {
         cout << ">> Error: Aeropuerto con codigo IATA '" << iataBuscado << "' no encontrado." << endl;
     }
 
-    // ==========================================
-    // --- Reto 2 (Grupos y Aislamiento - Tarjan) ---
-    // ==========================================
+    //Reto 2
     cout << "\n--- Reto 2: Analisis de Conectividad y Aislamiento (Tarjan) ---\n";
     vector<vector<int>> grafoParaTarjan = miGrafo.obtenerListaAdyacenciaPura();
     Tarjan tarjan;
@@ -54,9 +48,8 @@ int main() {
     for (int grupo : gruposSCC) {
         if (grupo > numSCC) numSCC = grupo;
     }
-    numSCC++; // Si el max es 5, hay 6 grupos (0 al 5)
+    numSCC++;
 
-    // Arreglos para filtrar los verdaderos "aislados"
     vector<bool> esAislado(numSCC, true);
     vector<int> tamanoSCC(numSCC, 0);
 
@@ -67,7 +60,6 @@ int main() {
         for (int vecino : grafoParaTarjan[i]) {
             int grupoVecino = gruposSCC[vecino];
             if (miGrupo != grupoVecino) {
-                // Si un aeropuerto se conecta con otro grupo, ambos grupos ya NO están aislados del mundo
                 esAislado[miGrupo] = false;
                 esAislado[grupoVecino] = false;
             }
@@ -76,7 +68,6 @@ int main() {
 
     int islasEncontradas = 0, tamanoMaxIsla = 0;
     for (int i = 0; i < numSCC; i++) {
-        // El reto dice "donde es posible viajar internamente", entonces asumimos que al menos necesitan 2 aeropuertos
         if (esAislado[i] && tamanoSCC[i] >= 2) {
             islasEncontradas++;
             if (tamanoSCC[i] > tamanoMaxIsla) tamanoMaxIsla = tamanoSCC[i];
@@ -86,9 +77,7 @@ int main() {
     cout << ">> Grupos totalmente aislados encontrados: " << islasEncontradas << endl;
     cout << ">> El grupo aislado mas grande contiene " << tamanoMaxIsla << " aeropuertos." << endl;
 
-    // ==========================================
-    // --- Reto 3 (Diametro con Dijkstra) ---
-    // ==========================================
+    //Reto 3
     cout << "\n--- Reto 3: La Maxima Eficiencia (Diametro del Grafo) ---\n";
     Dijkstra dijkstra;
     Dijkstra::ResultadoDiametro diametro = dijkstra.encontrarDiametro(miGrafo);
@@ -104,16 +93,13 @@ int main() {
         cout << "=============================================" << endl;
     }
 
-    // ==========================================
-    // --- FASE 5: Reto 4 (Red Minima de Sudamerica - Kruskal MST) ---
-    // ==========================================
+    //Reto 4
     cout << "\n--- Reto 4: Red Minima de Sudamerica (Kruskal) ---\n";
 
     vector<GrafoVuelos::AristaPonderada> todasLasAristas = miGrafo.obtenerTodasLasAristas();
     vector<GrafoVuelos::AristaPonderada> aristasSudamerica;
 
-    // Filtramos para quedarnos solo con las rutas internas de Sudamérica
-    for (const auto& arista : todasLasAristas) {
+    for (GrafoVuelos::AristaPonderada& arista : todasLasAristas) {
         if (miGrafo.esSudamerica(miGrafo.getPais(arista.origen)) &&
             miGrafo.esSudamerica(miGrafo.getPais(arista.destino))) {
             aristasSudamerica.push_back(arista);

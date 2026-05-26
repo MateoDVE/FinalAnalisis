@@ -16,10 +16,10 @@ public:
         double distanciaMaxima;
     };
 
-    ResultadoDiametro encontrarDiametro(const GrafoVuelos& grafo) {
+    ResultadoDiametro encontrarDiametro(GrafoVuelos& grafo) {
         int n = grafo.getCantidadNodos();
-        const double INFINITO = numeric_limits<double>::infinity();
-        const vector<Aeropuerto>& nodos = grafo.getAeropuertos();
+            double INFINITO = numeric_limits<double>::infinity();
+            vector<Aeropuerto>& nodos = grafo.getAeropuertos();
 
         ResultadoDiametro diametroGlobal = { -1, -1, -1.0 };
 
@@ -31,7 +31,6 @@ public:
             }
 
             vector<double> distancias(n, INFINITO);
-            // Min-Heap
             priority_queue<pair<double, int>, vector<pair<double, int>>, greater<pair<double, int>>> pq;
 
             distancias[i] = 0.0;
@@ -52,9 +51,9 @@ public:
                     nodoMasLejanoDesdeI = u;
                 }
 
-                for (const auto& ruta : nodos[u].getRutasSalida()) {
-                    int v = ruta.getIdDestino();
-                    double peso = ruta.getDistanciaKm();
+                    for (Ruta& ruta : nodos[u].getRutasSalida()) {
+                        int v = ruta.getIdDestino();
+                        double peso = ruta.getDistanciaKm();
 
                     if (distancias[u] + peso < distancias[v]) {
                         distancias[v] = distancias[u] + peso;
