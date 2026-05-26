@@ -7,9 +7,7 @@ using namespace std;
 
 class BFS {
 public:
-    static int contarAlcanzables(const GrafoVuelos& grafo, int origenIdx, int maxEscalas) {
-        // 0 escalas = 1 arista de distancia (vuelo directo)
-        // 3 escalas = 4 aristas de distancia máxima
+    int contarAlcanzables(const GrafoVuelos& grafo, int origenIdx, int maxEscalas) {
         int maxAristas = maxEscalas + 1;
         int n = grafo.getCantidadNodos();
         const auto& aeropuertos = grafo.getAeropuertos();
@@ -26,7 +24,6 @@ public:
             int u = cola.front();
             cola.pop();
 
-            // Si ya llegamos al límite de escalas, no expandimos más este camino
             if (distancias[u] >= maxAristas) continue;
 
             for (const auto& ruta : aeropuertos[u].getRutasSalida()) {

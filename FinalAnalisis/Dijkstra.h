@@ -3,10 +3,10 @@
 #include <queue>
 #include <limits>
 #include <iostream>
-#include <utility> // Soporte nativo para std::pair
 #include "GrafoVuelos.h"
 
 using namespace std;
+using std::pair;
 
 class Dijkstra {
 public:
@@ -16,7 +16,7 @@ public:
         double distanciaMaxima;
     };
 
-    static ResultadoDiametro encontrarDiametro(const GrafoVuelos& grafo) {
+    ResultadoDiametro encontrarDiametro(const GrafoVuelos& grafo) {
         int n = grafo.getCantidadNodos();
         const double INFINITO = numeric_limits<double>::infinity();
         const vector<Aeropuerto>& nodos = grafo.getAeropuertos();

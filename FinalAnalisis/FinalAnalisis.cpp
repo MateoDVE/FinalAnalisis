@@ -32,7 +32,8 @@ int main() {
     int origenIdx = miGrafo.obtenerIndicePorIATA(iataBuscado);
     if (origenIdx != -1) {
         // maxEscalas = 3
-        int alcanzables = BFS::contarAlcanzables(miGrafo, origenIdx, 3);
+        BFS bfs;
+        int alcanzables = bfs.contarAlcanzables(miGrafo, origenIdx, 3);
         cout << ">> Desde " << miGrafo.getNombreAeropuerto(origenIdx)
             << " (" << iataBuscado << ") puedes llegar a "
             << alcanzables << " aeropuertos distintos con un maximo de 3 escalas." << endl;
@@ -46,7 +47,8 @@ int main() {
     // ==========================================
     cout << "\n--- Reto 2: Analisis de Conectividad y Aislamiento (Tarjan) ---\n";
     vector<vector<int>> grafoParaTarjan = miGrafo.obtenerListaAdyacenciaPura();
-    vector<int> gruposSCC = Tarjan::encontrarSCC(grafoParaTarjan);
+    Tarjan tarjan;
+    vector<int> gruposSCC = tarjan.encontrarSCC(grafoParaTarjan);
 
     int numSCC = 0;
     for (int grupo : gruposSCC) {
@@ -88,7 +90,8 @@ int main() {
     // --- Reto 3 (Diametro con Dijkstra) ---
     // ==========================================
     cout << "\n--- Reto 3: La Maxima Eficiencia (Diametro del Grafo) ---\n";
-    Dijkstra::ResultadoDiametro diametro = Dijkstra::encontrarDiametro(miGrafo);
+    Dijkstra dijkstra;
+    Dijkstra::ResultadoDiametro diametro = dijkstra.encontrarDiametro(miGrafo);
 
     if (diametro.origenIdx != -1 && diametro.destinoIdx != -1) {
         cout << "\n=============================================" << endl;
@@ -118,8 +121,8 @@ int main() {
     }
 
     double costoMST_SA = 0.0;
-    // Ejecutamos Kruskal pasando únicamente las aristas de la región
-    vector<GrafoVuelos::AristaPonderada> redBaseSA = Kruskal::encontrarMST(aristasSudamerica, totalNodos, costoMST_SA);
+    Kruskal kruskal;
+    vector<GrafoVuelos::AristaPonderada> redBaseSA = kruskal.encontrarMST(aristasSudamerica, totalNodos, costoMST_SA);
 
     cout << ">> La red sudamericana original tenia " << aristasSudamerica.size() << " conexiones." << endl;
     cout << ">> La Red Minima necesaria calculada requiere solo " << redBaseSA.size() << " rutas." << endl;
